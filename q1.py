@@ -103,7 +103,7 @@ def sigmoid(z:np.ndarray) -> np.ndarray:
     a: output array, activations. 
     '''
     # YOUR CODE HERE
-    a = None
+    a = 1/(1 + np.exp(-z))
     # YOUR CODE ENDS HERE
     return a
 
@@ -117,7 +117,7 @@ def sigmoidDerivative(z:np.ndarray) -> np.ndarray:
     dx: output array, derivative of the sigmoid function.
     '''
     # YOUR CODE HERE
-    da = None
+    da = sigmoid(z)*(1 - sigmoid(z))
     # YOUR CODE ENDS HERE
     return da
 
@@ -170,12 +170,12 @@ class FCNN:
         # YOUR CODE HERE (PART OF QUESTION 1 PART A)
         if init == 'random':
             # Initilize weights using random normal distribution with mean 0 and standard deviation 1.
-            self.W1 = None
-            self.W2 = None
+            self.W1 = np.random.normal(0,1,(hidden_size, input_size))
+            self.W2 = np.random.normal(0,1,(output_size, hidden_size))
         elif init == 'zeros':
             # Initialize weights to zeros.
-            self.W1 = None
-            self.W2 = None
+            self.W1 = np.zeros((hidden_size, input_size))
+            self.W2 = np.zeros((output_size, hidden_size))
         self.numTrainableParams = None
         # YOUR CODE ENDS HERE (PART OF QUESTION 1 PART A)
     
@@ -199,7 +199,15 @@ class FCNN:
         '''
         # YOUR CODE HERE (PART OF QUESTION 1 PART A)
         forwardPassResults = {}
-        y = None
+        if train:
+            forwardPassResults['x'] = x
+            forwardPassResults['z1'] = x*self.W1.T
+            forwardPassResults['a1'] = sigmoid(forwardPassResults['z1'])
+            forwardPassResults['z2'] = forwardPassResults['a1']*self.W2.T
+            forwardPassResults['y'] = sigmoid(forwardPassResults['z2'])
+            y = forwardPassResults['y']
+        else:
+            y = None
 
         # YOUR CODE ENDS HERE (PART OF QUESTION 1 PART A)
         if train:
