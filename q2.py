@@ -146,3 +146,77 @@ def visualizeResult(data, clusters, assignments, minCost):
     plt.legend()
     plt.show()
 
+
+
+def visualizeElbowMethod(data):
+    '''
+    Create visualization showing clustering results for different k values (1-8)
+    Returns k_values and corresponding costs for elbow plot
+    '''
+    # YOUR CODE HERE - Need to implement this
+    k_values = range(1, 9)
+    costs = []
+    
+    fig, axes = plt.subplots(2, 4, figsize=(16, 8))
+    fig.suptitle('K-Means Clustering Results for Different K Values')
+    
+    for i, k in enumerate(k_values):
+        row = i // 4
+        col = i % 4
+        
+        # Run k-means for this k value
+        clusters, assignments, cost = trainKMeans(data, k, 100)
+        costs.append(cost)
+        
+        # Plot the clustering result
+        ax = axes[row, col]
+        if k == 1:
+            # Special case for k=1
+            ax.scatter(data[0, :], data[1, :], c='blue', alpha=0.7)
+            ax.scatter(clusters[0, 0], clusters[1, 0], c='red', marker='x', s=100, linewidth=3)
+        else:
+            colors = plt.cm.tab10(np.arange(k))
+            for j in range(k):
+                mask = assignments == j
+                ax.scatter(data[0, mask], data[1, mask], c=colors[j], alpha=0.7)
+            ax.scatter(clusters[0, :], clusters[1, :], c='red', marker='x', s=100, linewidth=3)
+        
+        ax.set_title(f'k={k}, Cost={cost:.2f}')
+        ax.set_xlabel('X coordinate')
+        ax.set_ylabel('Y coordinate')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    return k_values, costs
+
+def plotElbowCurve(k_values, costs):
+    '''
+    Plot the elbow curve showing cost vs k
+    '''
+    # YOUR CODE HERE - Need to implement this
+    plt.figure(figsize=(10, 6))
+    plt.plot(k_values, costs, 'bo-', linewidth=2, markersize=8)
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Sum of Squared Distances (Cost)')
+    plt.title('Elbow Method: Cost vs Number of Clusters')
+    plt.grid(True, alpha=0.3)
+    
+    # Annotate each point
+    for k, cost in zip(k_values, costs):
+        plt.annotate(f'({k}, {cost:.1f})', (k, cost), 
+                    textcoords="offset points", xytext=(0,10), ha='center')
+    
+    plt.show()
+
+def analyzeElbowMethod():
+    '''
+    Complete elbow method analysis - this is what you'll call in your notebook
+    '''
+    # Load data
+    data = loadDataset()
+    
+    # Create visualizations and get costs
+    k_values, costs = visualizeElbowMethod(data)
+    plotElbowCurve(k_values, costs)
+    return k_values, costs
