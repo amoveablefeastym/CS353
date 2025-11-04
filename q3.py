@@ -106,4 +106,5 @@ def plotDecoderMap(decoder, latentSpace):
             axarr[9-j, i].axis('off')
     f.tight_layout()
     f.show()
+
     
